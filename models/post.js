@@ -20,5 +20,5 @@ const Agendamentos = db.sequelize.define("agendamentos", {
     type: db.Sequelize.STRING,
   },
 });
-
+// Agendamentos.sync({ force: true });
 module.exports = Agendamentos;

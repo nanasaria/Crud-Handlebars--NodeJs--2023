@@ -8,5 +8,3 @@ module.exports = {
   Sequelize: Sequelize,
   sequelize: sequelize,
 };
-
-// Agendamentos.sync({ force: true });

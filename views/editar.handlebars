@@ -1,33 +1,33 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="css/style.css" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-      crossorigin="anonymous"
-    />
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-      crossorigin="anonymous"
-    ></script>
-    <title>Editar Agendamentos</title>
-  </head>
-  <body>
-    <div class="container-sm">
-      <form class="row g-3 needs-validation" novalidate>
+<div class="navbar-auto">
+  <a href="/"><button class="btn-cadastrar">Cadastrar</button></a>
+  <a href="/"><button class="btn-cadastrar">Consultar</button></a>
+</div>
+
+<div class="container-sm">
+  {{#each post}}
+    {{#dataValues}}
+      <form
+        class="row g-3 needs-validation"
+        action="/atualizar"
+        method="post"
+        novalidate
+      >
         <div class="col-md-6">
+          <input
+            type="hidden"
+            name="id"
+            class="form-control"
+            id="nome"
+            value="{{id}}"
+          />
           <label for="inputName" class="form-label">Nome</label>
           <input
             type="text"
             class="form-control"
-            id="inputName"
+            id="nome"
+            name="nome"
             placeholder="Nome Completo"
+            value="{{nome}}"
             required
           />
           <div class="invalid-feedback">Digite um nome.</div>
@@ -37,19 +37,23 @@
           <input
             type="text"
             class="form-control"
-            id="inputCEP"
+            id="cep"
+            name="cep"
             placeholder="Somente números"
+            value="{{cep}}"
             required
           />
           <div class="invalid-feedback">Digite um CEP Válido.</div>
         </div>
         <div class="col-md-6">
-          <label for="inputCEP" class="form-label">Endereço</label>
+          <label for="inputEndereco" class="form-label">Endereço</label>
           <input
             type="text"
             class="form-control"
-            id="inputCEP"
+            id="endereco"
+            name="endereco"
             placeholder="Rua"
+            value="{{endereco}}"
             required
           />
           <div class="invalid-feedback">Digite um Endereço.</div>
@@ -59,15 +63,18 @@
           <input
             type="text"
             class="form-control"
-            id="inputCity"
+            id="cidade"
+            name="cidade"
             placeholder="Cidade"
+            value="{{cidade}}"
             required
           />
           <div class="invalid-feedback">Digite uma Cidade.</div>
         </div>
         <div class="col-md-6">
           <label for="inputState" class="form-label">Estado</label>
-          <select id="inputState" class="form-select">
+          <select id="estado" name="estado" class="form-select">
+            <option value="{{estado}}" selected>{{estado}}</option>
             <option value="AC">Acre</option>
             <option value="AL">Alagoas</option>
             <option value="AP">Amapá</option>
@@ -103,8 +110,10 @@
           <input
             type="text"
             class="form-control"
-            id="inputBairro"
+            id="bairro"
+            name="bairro"
             placeholder="Bairro"
+            value="{{bairro}}"
             required
           />
           <div class="invalid-feedback">Digite um Bairro.</div>
@@ -113,8 +122,8 @@
           <button type="submit" class="button">Editar</button>
         </div>
       </form>
-    </div>
+    {{/dataValues}}
+  {{/each}}
+</div>
 
-    <script src="js/validate.js"></script>
-  </body>
-</html>
+<script src="js/validate.js"></script>
