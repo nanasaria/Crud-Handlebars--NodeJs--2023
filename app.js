@@ -2,7 +2,16 @@ const bodyParser = require("body-parser");
 const express = require("express");
 const app = express();
 const handlebars = require("express-handlebars");
-const post = require("./models/post");
+const { redirect } = require("express/lib/response");
+const {initializeApp, applicationDefault, cert} = require('firebase-admin/app');
+const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore')
+const serviceAccount = require('./crud-pwii-firebase-adminsdk-82nw0-fbeb3f1a93.json') 
+
+initializeApp({
+  credential: cert(serviceAccount)
+})
+
+const db = getFirestore()
 
 app.use(express.static(__dirname + "/public"));
 
@@ -17,8 +26,7 @@ app.get("/", function (req, res) {
 });
 
 app.post("/cadastrar", function (req, res) {
-  post
-    .create({
+  var result = db.collection('agendamentos').add({
       nome: req.body.nome,
       cep: req.body.cep,
       endereco: req.body.endereco,
@@ -34,58 +42,51 @@ app.post("/cadastrar", function (req, res) {
     });
 });
 
-app.get("/consulta", function (req, res) {
-  post
-    .findAll()
-    .then(function (post) {
-      res.render("consulta", { post });
+app.get("/consulta", async function (req, res) {
+  await db.collection('agendamentos').get().then((snapShot) => {
+    const doc = [];
+    snapShot.forEach((docs) => {
+      doc.push({id: docs.id});
+      doc.push(docs.data());
     })
-    .catch(function (erro) {
-      console.log("Erro ao carregar Dados!");
-    });
+    res.render("Consulta", {doc})
+  }).catch((error) => {
+    console.log(error)
+  })
 });
 
-app.get("/excluir/:id", function (req, res) {
-  post
-    .destroy({ where: { id: req.params.id } })
-    .then(function () {
-      alert("Excluído com Sucesso!");
-      res.redirect("/consulta");
-    })
-    .catch(function (erro) {
-      console.log("Erro ao excluir ou encontrar os dados do banco: " + erro);
-    });
+app.get("/excluir/:id", async function (req, res) {
+  const id = req.params.id
+  const doc = await db.collection('agendamentos').doc(`${id}`).delete().then(() => {
+    res.redirect("/consulta")
+  }).catch((error) => {
+    console.log(error)
+  })
 });
 
-app.get("/editar/:id", function (req, res) {
-  post
-    .findAll({ where: { id: req.params.id } })
-    .then(function (post) {
-      res.render("editar", { post });
-    })
-    .catch(function (erro) {
-      console.log("Erro ao carregar dados do banco: " + erro);
-    });
+app.get("/editar/:id", async function (req, res) {
+  const id = req.params.id
+  const doc = await db.collection('agendamentos').doc(`${id}`).get()
+  const post = []
+
+  try{
+    post.push(id)
+    post.push(doc.data())
+    res.redirect("/editar", {post})
+  }catch(error){
+    console.log(error)
+  }
 });
 
-app.post("/atualizar", function (req, res) {
-  post
-    .update(
-      {
+app.post("/atualizar", async function (req, res) {
+  await db.collection('agendamentos').doc(req.body.id).update({
         nome: req.body.nome,
         cep: req.body.cep,
         endereco: req.body.endereco,
         cidade: req.body.cidade,
         estado: req.body.estado,
         bairro: req.body.bairro,
-      },
-      {
-        where: {
-          id: req.body.id,
-        },
-      }
-    )
-    .then(function () {
+      }).then(function () {
       res.redirect("/consulta");
     });
 });
